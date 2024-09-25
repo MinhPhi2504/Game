@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<head>
+    <title>RPS with computer</title>
+    <style>
+        body {
+            background-color: rgb(25, 25, 25);
+            color: white;
+        }
+        .Name_page {
+            font-family: Arial;
+            font-size: 25px;
+            font-weight: 200;
+        }
+        .Button {
+            background-color: transparent;
+            height: 100px;
+            width: 100px; /* Đảm bảo kích thước đều nhau */
+            border: 3px solid white;
+            border-radius: 50%; /* Tạo hình tròn */
+            margin-right: 10px;
+        }
+        .emoji {
+            width: 55px;
+        }
+        .Show-result {
+            font-family: Arial;
+            font-size: 25px;
+        }
+        .Show-score{
+            font-family: Arial;
+            font-size: 25px;
+        }
+        .button {
+            margin-top: 25px;
+        }
+        .resetButton,.autoPlay {
+            padding: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 50PX;
+        }
+    </style>
+</head>
+<body>
+    <p class="Name_page">Rock Paper Scissors</p>
+    <button onclick="PlayGame('rock')" class ="Button">
+        <img src="rock-emoji.png" class="emoji">
+    </button>
+    <button onclick="PlayGame('paper')" class ="Button"><img src="paper-emoji.png" class="emoji"></button>
+    <button onclick="PlayGame('scissors')" class ="Button"><img src="scissors-emoji.png" class="emoji"></button>
+    <div class = "button">
+        <button onclick="ResetScore()" class ="resetButton">Reset Point</button>
+        <button class ="autoPlay" onclick = "PlayAuto()">Auto Play</button>
+    </div>
+    
+    <p class = "Show-result"></p>
+    <p class = "Show-score"></p>
+    <script>
+        /*let score = {
+            wins : 0,
+            losses : 0,
+            ties : 0,
+        } */
+        let score = JSON.parse(localStorage.getItem('score'))
+        if (!score) {// score === null
+        score = {
+            wins : 0,
+            losses : 0,
+            ties : 0,  
+        }
+        }
+        let isPlaying = false
+        let idInterval
+        function PlayAuto () {
+            if (!isPlaying) {
+                idInterval = setInterval( function () {
+                    const autoMove = Show_computerMove()
+                    PlayGame(autoMove)
+                },900)
+                isPlaying = true 
+                document.querySelector('.autoPlay').innerHTML = 'Playing...'
+            }
+            else {
+                clearInterval(idInterval)
+                isPlaying = false
+                document.querySelector('.autoPlay').innerHTML = 'Auto Play'
+            }
+            
+        }
+        function ResetScore() {
+            score.losses = 0
+            score.ties = 0
+            score.wins = 0
+            localStorage.removeItem('score')
+            document.querySelector('.Show-result').innerHTML = ''
+            document.querySelector('.Show-score').innerHTML = ''
+        }
+        function PlayGame(playerMove) {
+            let result = ''
+            const computerMove = Show_computerMove()
+            switch (playerMove) {
+                case 'rock' : 
+                    if ( computerMove ==='rock') {
+                        result = 'You tie.'
+                        score.ties += 1
+                    }
+                    else if ( computerMove === 'paper') {
+                        result = 'You lose.'
+                        score.losses += 1
+                    }
+                    else {
+                        result = 'You win.'
+                        score.wins += 1
+                    }
+                    break;
+                case 'paper' :
+                    if ( computerMove ==='rock') {
+                        result = 'You win.'
+                        score.wins += 1
+                    }
+                    else if ( computerMove === 'paper') {
+                        result = 'You tie.'
+                        score.ties += 1
+                    }
+                    else {
+                        result = 'You lose.'
+                        score.losses += 1
+                    }
+                    break;
+                case 'scissors' :
+                    if ( computerMove ==='rock') {
+                        result = 'You lose.'
+                        score.losses += 1
+                    }
+                    else if ( computerMove === 'paper') {
+                        result = 'You win.'
+                        score.wins += 1
+                    }
+                    else {
+                        result = 'You tie.'
+                        score.ties += 1
+                    }
+                    break;
+            }
+            localStorage.setItem('score', JSON.stringify(score) )
+            document.querySelector('.Show-result').innerHTML = `You pick  <img src="${playerMove}-emoji.png" class="emoji"> . Computer pick <img src="${computerMove}-emoji.png" class="emoji">. ${result}`
+            document.querySelector('.Show-score').innerHTML = `Wins: ${score.wins} Losses: ${score.losses} Ties: ${score.ties}`
+        }
+        function Show_computerMove () {
+            const move = Math.random()
+            let result = ''
+            if ( move < 1/3)
+                result = 'rock'
+            else if ( move < 2/3)
+                result = 'paper'
+            else
+                result = 'scissors'
+            return result
+        }
+    </script>
+</body>
