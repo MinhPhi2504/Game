@@ -22,13 +22,13 @@
         .emoji {
             width: 55px;
         }
-        .Show-result,.Show-score,.Show-detail {
+        .Show-result {
             font-family: Arial;
             font-size: 25px;
         }
-        .Show-result {
-            font-size: 30px;
-            font-weight: bold;
+        .Show-score{
+            font-family: Arial;
+            font-size: 25px;
         }
         .button {
             margin-top: 25px;
@@ -52,11 +52,9 @@
         <button onclick="ResetScore()" class ="resetButton">Reset Point</button>
         <button class ="autoPlay" onclick = "PlayAuto()">Auto Play</button>
     </div>
-    <div>
-        <p class = "Show-result"></p>
-    <p class = "Show-detail"></p>
+    
+    <p class = "Show-result"></p>
     <p class = "Show-score"></p>
-    </div>
     <script>
         /*let score = {
             wins : 0,
@@ -73,6 +71,17 @@
         }
         let isPlaying = false
         let idInterval
+        document.body.addEventListener('keydown', (event) => {
+            if ( event.key === 'r') {
+                PlayGame('rock')
+            }
+            else if ( event.key === 'p') {
+                PlayGame('paper')
+            }
+            else if ( event.key === 's') {
+                PlayGame('scissors')
+            }
+        })
         function PlayAuto () {
             if (!isPlaying) {
                 idInterval = setInterval( function () {
@@ -96,7 +105,6 @@
             localStorage.removeItem('score')
             document.querySelector('.Show-result').innerHTML = ''
             document.querySelector('.Show-score').innerHTML = ''
-            document.querySelector('.Show-detail').innerHTML = ''
         }
         function PlayGame(playerMove) {
             let result = ''
@@ -146,8 +154,7 @@
                     break;
             }
             localStorage.setItem('score', JSON.stringify(score) )
-            document.querySelector('.Show-result').innerHTML = result
-            document.querySelector('.Show-detail').innerHTML = `You pick  <img src="${playerMove}-emoji.png" class="emoji"> . Computer pick <img src="${computerMove}-emoji.png" class="emoji">.`
+            document.querySelector('.Show-result').innerHTML = `You pick  <img src="${playerMove}-emoji.png" class="emoji"> . Computer pick <img src="${computerMove}-emoji.png" class="emoji">. ${result}`
             document.querySelector('.Show-score').innerHTML = `Wins: ${score.wins} Losses: ${score.losses} Ties: ${score.ties}`
         }
         function Show_computerMove () {
